@@ -6,7 +6,6 @@ import time
 # TODO: Architecture:   - UI that opens a sample from a song which allows you to low pass it
 # TODO:                 - The UI contains a knob which allows us to change the cutoff frequency and displays the updated signal after 2 seconds (debouncing)
 # TODO:                 - The UI should allow us to play the original song and the low passed song
-# TODO: Figure out how to import a sound and transform it into a numpy array
 # TODO: Figure ouy how to use PyQT and how to plot using PyQT # https://www.youtube.com/watch?v=je9Cj7G5pnY. If this doesn't work fall back to jupyter notebooks? 
 
 def apply_filter(b, a, inputs):
@@ -51,5 +50,28 @@ def main_loop():
         figure.canvas.flush_events()
         time.sleep(1)
 
+def read_audio_sample():
+    sample_rate, sample_array = sp.io.wavfile.read("MusicSoundsBetterWithYouSample.wav")
+    sample_first_channel = sample_array[:, 0]
+    sample_second_channel = sample_array[:, 1]
+
+    cutoff_freq = 1000
+    b, a = sp.signal.butter(6, cutoff_freq / sample_rate)
+    low_pass_first_channel = apply_filter(b, a, sample_first_channel)
+    low_pass_second_channel = apply_filter(b, a, sample_second_channel)
+    low_pass_sample_array = np.stack((low_pass_first_channel, low_pass_second_channel), axis=-1)
+    low_pass_sample_array = np.asarray(low_pass_sample_array, dtype=np.int16)
+    sp.io.wavfile.write("MusicSoundsBetterWithYouLowPass.wav", sample_rate, low_pass_sample_array)
+
+    figure = plt.figure()
+    subplot_first_channel = figure.add_subplot(2, 1, 1)
+    _ = subplot_first_channel.plot(sample_first_channel, 'b', low_pass_first_channel, 'r')
+    subplot_second_channel = figure.add_subplot(2, 1, 2)
+    _ = subplot_second_channel.plot(sample_second_channel, 'b', low_pass_second_channel, 'r')
+    figure.canvas.draw()
+    figure.canvas.flush_events()
+
+    plt.show()
+
 if __name__ == "__main__":
-    main_loop()
+    read_audio_sample()
