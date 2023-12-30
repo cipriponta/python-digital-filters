@@ -7,7 +7,7 @@ import time
 # TODO:                 - The UI contains a knob which allows us to change the cutoff frequency and displays the updated signal after 2 seconds (debouncing)
 # TODO:                 - The UI should allow us to play the original song and the low passed song
 # TODO: Figure out how to import a sound and transform it into a numpy array
-# TODO: Figure ouy how to use PyQT and how to plot using PyQT. If this doesn't work fall back to jupyter notebooks? 
+# TODO: Figure ouy how to use PyQT and how to plot using PyQT # https://www.youtube.com/watch?v=je9Cj7G5pnY. If this doesn't work fall back to jupyter notebooks? 
 
 def apply_filter(b, a, inputs):
     outputs = np.zeros(inputs.size)
